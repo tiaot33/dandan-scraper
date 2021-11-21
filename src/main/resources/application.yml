@@ -1,7 +1,9 @@
 path:
   source:
-    - /share/Container/qbittorrent/downloads
-  target: /share/homes/jiaran-diana/视频
+#    - /share/Container/qbittorrent/downloads
+    - /mnt/qnap/jiaran-diana/downloads/incomplete/qbittorrent
+#  target: /share/homes/jiaran-diana/视频
+  target: /mnt/qnap/jiaran-diana/视频/动画
 logging:
   file:
     name: dandan.log

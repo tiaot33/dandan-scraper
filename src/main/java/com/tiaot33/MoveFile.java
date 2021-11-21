@@ -5,9 +5,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -31,6 +29,9 @@ public class MoveFile {
     public void moveFile(Path video, Path targetDir){
         Path parent = video.getParent();
         List<Path> videos = FileOpsUtil.getVideos(parent);
+        if (Files.notExists(Paths.get(targetDir.toString(), FileNameUtil.getName(video.toFile())))) {
+            Files.move(video, Paths.get(targetDir.toString(), FileNameUtil.getName(video.toFile())));
+        }
         if (videos.size() == 1) {
             //文件夹下只有一个视频，则把字幕等相关文件复制到others文件夹
             List<Path> extraFiles = new ArrayList<>();
@@ -38,11 +39,11 @@ public class MoveFile {
                 paths.forEach(p -> {
                     if ("ass".equals(FileNameUtil.extName(p.toFile()))) {
                         try {
-                            Files.move(p, targetDir);
+                            Files.move(p, Paths.get(targetDir.toString(), FileNameUtil.getName(p.toFile())), StandardCopyOption.REPLACE_EXISTING);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    } else {
+                    } else if (!Files.isDirectory(p)){
                         extraFiles.add(p);
                     }
                 });
@@ -53,12 +54,9 @@ public class MoveFile {
                     Files.createDirectory(extra);
                 }
                 for (Path path : extraFiles) {
-                    Files.move(path, extra);
+                    Files.move(path, Paths.get(extra.toString(), FileNameUtil.getName(path.toFile())), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
-        }
-        if (Files.notExists(Paths.get(targetDir.toString(), FileNameUtil.getName(video.toFile())))) {
-            Files.move(video, targetDir);
         }
     }
 }

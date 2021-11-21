@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,7 +74,7 @@ public class FileOpsUtil {
     public static List<Path> getVideos(Path path) {
         List<String> videoExts = Arrays.asList("flv", "avi", "wmv", "asf", "wmvhd", "mp4", "mpg", "mpeg", "3gp", "mkv", "rm", "rmvb", "mov", "qt", "ogg", "ogv", "oga", "mod");
         List<Path> res;
-        try (Stream<Path> paths = Files.walk(path)) {
+        try (Stream<Path> paths = Files.walk(path, FileVisitOption.FOLLOW_LINKS)) {
             res = paths.filter(f -> videoExts.contains(FileNameUtil.extName(f.toFile()))).collect(Collectors.toList());
         }
         return res;
@@ -83,7 +84,7 @@ public class FileOpsUtil {
         try (Stream<Path> paths = Files.list(path)) {
             List<Path> paths1 = paths.filter(Files::isDirectory).collect(Collectors.toList());
             for (Path p : paths1) {
-                if (Files.list(p).findAny().isPresent()) {
+                if (!Files.list(p).findAny().isPresent()) {
                     try {
                         Files.deleteIfExists(p);
                     } catch (Exception e) {

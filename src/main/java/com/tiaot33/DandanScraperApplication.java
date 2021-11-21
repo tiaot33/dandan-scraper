@@ -1,5 +1,6 @@
 package com.tiaot33;
 
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,8 +21,10 @@ public class DandanScraperApplication {
         SpringApplication.run(DandanScraperApplication.class, args);
     }
 
+    @SneakyThrows
     @Scheduled(fixedDelay = 1000*60*60*12)
     public void sche(){
+        Thread.sleep(10000);
         scraperAndMove.scraperDirsAndMove();
     }
 

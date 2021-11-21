@@ -1,6 +1,8 @@
 package com.tiaot33;
 
+import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.io.file.FileWriter;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.tiaot33.model.*;
 import lombok.SneakyThrows;
@@ -33,7 +35,7 @@ public class ScraperAndMove {
     PathProperty pathProperty;
 
     public void scraperDirsAndMove(){
-        log.info("");
+        log.info("开始扫描任务");
         List<String> sources = pathProperty.getSource();
         String targetStr = pathProperty.getTarget();
         Path targetPath = Paths.get(targetStr);
@@ -41,6 +43,7 @@ public class ScraperAndMove {
             Path sourcePath = Paths.get(sourceStr);
             scraperAndMove(sourcePath,targetPath);
         }
+        log.info("扫描任务结束");
     }
 
     @SneakyThrows
@@ -60,7 +63,8 @@ public class ScraperAndMove {
             BangumiDetails bangumi = bangumiDetailsResponse.getBangumi();
             String animeTitle = bangumi.getAnimeTitle();
             String videoTitle = matchesItem.getEpisodeTitle();
-            File newFile = Paths.get(video.getParent().toString(), matchesItem.getEpisodeId()+"-"+videoTitle).toFile();
+            String newFileName = FileNameUtil.cleanInvalid(StrUtil.format("{}-{} ({}).{}", matchesItem.getEpisodeId(), videoTitle, FileNameUtil.getName(video.toFile()), FileNameUtil.extName(video.toFile())));
+            File newFile = Paths.get(video.getParent().toString(), newFileName).toFile();
             video.toFile().renameTo(newFile);
             Path bangumiDir = Paths.get(targetPath.toString(), animeTitle.trim());
             if (Files.notExists(bangumiDir)) Files.createDirectories(bangumiDir);
