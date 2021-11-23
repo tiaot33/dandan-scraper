@@ -1,0 +1,1 @@
+docker build -f ./docker/Dockerfile -t dandan-scraper --build-arg  JAR_FILE=dandan-scraper.jar  .

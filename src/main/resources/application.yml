@@ -4,6 +4,9 @@ path:
     - /mnt/qnap/jiaran-diana/downloads/incomplete/qbittorrent
 #  target: /share/homes/jiaran-diana/视频
   target: /mnt/qnap/jiaran-diana/视频/动画
-logging:
-  file:
-    name: dandan.log
+#logging:
+#  file:
+#    name: dandan.log
+spring:
+  application:
+    name: dandan-scraper
