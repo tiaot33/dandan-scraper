@@ -80,15 +80,16 @@ public class FileOpsUtil {
         return res;
     }
     @SneakyThrows
-    public static void cleanEmptyDirectory(Path path) {
-        try (Stream<Path> paths = Files.list(path)) {
-            List<Path> paths1 = paths.filter(Files::isDirectory).collect(Collectors.toList());
-            for (Path p : paths1) {
-                if (!Files.list(p).findAny().isPresent()) {
+    public static void cleanEmptyDirectory(Path path, List<Path> excludeDirs) {
+        try (Stream<Path> paths = Files.walk(path)) {
+            List<Path> dirs = paths.filter(Files::isDirectory).collect(Collectors.toList());
+            for (Path d : dirs) {
+                if (!Files.list(d).findAny().isPresent()) {
+                    if (excludeDirs.contains(d)) continue;
                     try {
-                        Files.deleteIfExists(p);
+                        Files.deleteIfExists(d);
                     } catch (Exception e) {
-                        log.error("[{}]空文件夹删除失败",p);
+                        log.error("[{}]空文件夹删除失败",d);
                     }
                 }
             }

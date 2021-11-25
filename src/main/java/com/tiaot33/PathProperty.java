@@ -20,4 +20,6 @@ import java.util.List;
 public class PathProperty {
     private List<String> source;
     private String target;
+    private List<String> excludeDir;
+    private String scraperFailedDir;
 }

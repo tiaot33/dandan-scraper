@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Description:
@@ -53,8 +54,10 @@ public class ScraperAndMove {
             MatchRequestBean matchRequest = FileOpsUtil.getMatchRequest(video.toFile());
             MatchResponse match = api.match(matchRequest);
             if (match == null || CollectionUtils.isEmpty(match.getMatches()) || match.getMatches().get(0) == null) {
-                // TODO: 2021/11/19 移动到识别失败文件夹
-
+                //移动到识别失败文件夹
+                String scraperFailedDir = pathProperty.getScraperFailedDir();
+                Path scraperFailedPath = Paths.get(sourcePath.toString(), scraperFailedDir,FileNameUtil.getName(video.toFile()));
+                Files.createSymbolicLink(scraperFailedPath, video);
                 continue;
             }
             MatchesItem matchesItem = match.getMatches().get(0);
@@ -76,6 +79,8 @@ public class ScraperAndMove {
             }
             moveFile.moveFile(newFile.toPath(), bangumiDir);
         }
-        FileOpsUtil.cleanEmptyDirectory(sourcePath);
+        List<String> excludeDirs = pathProperty.getExcludeDir();
+        List<Path> excludePaths = excludeDirs.stream().map(d -> Paths.get(sourcePath.toString(), d)).collect(Collectors.toList());
+        FileOpsUtil.cleanEmptyDirectory(sourcePath, excludePaths);
     }
 }

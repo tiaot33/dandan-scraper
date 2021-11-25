@@ -15,21 +15,11 @@ import javax.annotation.PostConstruct;
 @EnableConfigurationProperties
 @EnableScheduling
 public class DandanScraperApplication {
-    @Autowired
-    ScraperAndMove scraperAndMove;
-
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(DandanScraperApplication.class, args);
         PathProperty bean = run.getBean(PathProperty.class);
         System.out.println(bean.getTarget());
         System.out.println(bean.getSource());
     }
-
-    @SneakyThrows
-    //@Scheduled(fixedDelay = 1000*60*60*12)
-    public void sche(){
-        scraperAndMove.scraperDirsAndMove();
-    }
-
 }
 
