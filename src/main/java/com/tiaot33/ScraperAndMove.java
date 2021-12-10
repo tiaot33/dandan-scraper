@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -64,9 +65,10 @@ public class ScraperAndMove {
             int animeId = matchesItem.getAnimeId();
             BangumiDetailsResponse bangumiDetailsResponse = api.queryBangumi(animeId);
             BangumiDetails bangumi = bangumiDetailsResponse.getBangumi();
+            String episodeNum = bangumi.getEpisodes().stream().filter(a -> a.getEpisodeId() == matchesItem.getEpisodeId()).map(BangumiEpisode::getEpisodeNumber).findFirst().orElse("");
             String animeTitle = bangumi.getAnimeTitle();
             String videoTitle = matchesItem.getEpisodeTitle();
-            String newFileName = FileNameUtil.cleanInvalid(StrUtil.format("{}-{} ({}).{}", matchesItem.getEpisodeId(), videoTitle, FileNameUtil.getName(video.toFile()), FileNameUtil.extName(video.toFile())));
+            String newFileName = FileNameUtil.cleanInvalid(StrUtil.format("S1E{}-{}-{} ({}).{}", episodeNum, matchesItem.getEpisodeId(), videoTitle, FileNameUtil.getName(video.toFile()), FileNameUtil.extName(video.toFile())));
             File newFile = Paths.get(video.getParent().toString(), newFileName).toFile();
             video.toFile().renameTo(newFile);
             Path bangumiDir = Paths.get(targetPath.toString(), animeTitle.trim());
